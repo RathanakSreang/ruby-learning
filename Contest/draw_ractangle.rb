@@ -1,42 +1,66 @@
 @rect = {}
-# p must > 0
+@sum_arr = {}
 def rectangle(arr, p)
-  return @rect["#{arr}_#{p}"] if @rect["#{arr}_#{p}"]
+  return @rect["#{arr}"] if @rect["#{arr}"]
   result = 0
   length = arr.length
   length.times do |t1|
-    ((t1 + (p -1))...length).each do |t2|
-      result += @rect["#{arr[t1..t2]}_#{p}"] != nil ? @rect["#{arr[t1..t2]}_#{p}"] : (arr[t1..t2].count("1") == p ? 1 : 0)
+    (t1...length).each do |t2|
+      result += if @rect["#{arr[t1..t2]}"]
+        @rect["#{arr[t1..t2]}"]
+      else
+        @rect["#{arr[t1..t2]}"] = (arr[t1..t2].reduce(:+) == p ? 1 : 0)
+      end
     end
   end
-  @rect["#{arr}_#{p}"] = result
+  @rect["#{arr}"] = result
   result
 end
 
-# arr = ["001", '010', '000']
-# p = 1
-arr = ["101", '000', '101']
-p = 2
-n,m = [3,3]
-result = 0
-arr.each_with_index do |a, i|
-  result += rectangle(a, p)
-end
-arr.each_with_index do |a, i|
-  if i > 0
-    temp = a.split('')
-    (i-1).times do |ii|
-      puts "#{arr[i-ii].split('')}"
+def sum_row(arr)
+  return @sum_arr["#{arr}"] if @sum_arr["#{arr}"]
+  result = []
+  length = arr.length
+  sub_l = arr[0].length
+  length.times do |t1|
+    (1+t1...length).each do |t2|
+      result << if @sum_arr["#{arr[t1..t2]}"]
+        @sum_arr["#{arr[t1..t2]}"]
+      else
+        @sum_arr["#{arr[t1..t2]}"] = (0...sub_l).map do |index|
+          s = 0
+          arr[t1..t2].each do |a|
+            s += a[index]
+          end
+          s
+        end
+        @sum_arr["#{arr[t1..t2]}"]
+      end
     end
   end
+  @sum_arr["#{arr}"] = result
+  result
 end
-# other_arr = []
-# n.times do |i|
-#   temp = ''
-#   m.times do |j|
-#     temp += arr[i][j] + arr[i + 1][j]
-#   end
-#   other_arr << temp
-# end
-# puts "#{other_arr}"
+
+arr = ["001", '010', '000']
+p = 0
+# arr = ["101", '000', '101']
+# arr = ["100", '011', '101', '111']
+# p = 2
+# n,m,p = gets.split.map(&:to_i)
+
+result = 0
+cont_arr = []
+arr.each_with_index do |a, index|
+  a = a.split('').map(&:to_i)
+# n.times do
+  # a = gets
+  # a = a.split('').map(&:to_i)
+  # a.pop
+  cont_arr << a
+  result += rectangle(a, p)
+end
+sum_row(cont_arr).each do |a|
+  result += rectangle(a, p)
+end
 puts result
