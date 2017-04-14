@@ -13,7 +13,11 @@ def rectangle(arr, p)
         temp += if @rect["#{arr[t1..t2]}"]
           @rect["#{arr[t1..t2]}"]
         else
-          @rect["#{arr[t1..t2]}"] = (arr[t1..t2].reduce(:+) == p ? 1 : 0)
+          sum = 0
+          arr[t1..t2].each_char do |ch|
+            sum += ch.to_i
+          end
+          @rect["#{arr[t1..t2]}"] = (sum== p ? 1 : 0)
         end
       end
       @rect["#{arr[t1..length]}_t1"] = temp
@@ -40,12 +44,12 @@ def sum_row(arr)
           @sum_arr["#{arr[t1..t2]}"] = (0...sub_l).map do |index|
             s = 0
             arr[t1..t2].each do |a|
-              s += a[index]
+              s += a[index].to_i
             end
-            s
+            s.to_s
           end
           @sum_arr["#{arr[t1..t2]}"]
-        end
+        end.join('')
       end
       @sum_arr["#{arr[t1..length]}_t1"] = temp
     end
@@ -64,11 +68,11 @@ n,m,p = gets.split.map(&:to_i)
 result = 0
 cont_arr = []
 # arr.each_with_index do |a, index|
-#   a = a.split('').map(&:to_i)
+#   a# = a.split('')#.map(&:to_i)
 n.times do
-  a = gets
-  a = a.split('').map(&:to_i)
-  a.pop
+  a = gets.strip
+#   a = a.split('').map(&:to_i)
+#   a.pop
   cont_arr << a
   result += rectangle(a, p)
 end
